@@ -3,6 +3,7 @@ package cn.hutool.core.date;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.BetweenFormatter.Level;
 import cn.hutool.core.date.format.FastDateFormat;
+import cn.hutool.core.lang.Console;
 import cn.hutool.core.util.RandomUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -288,6 +289,9 @@ public class DateUtilTest {
 	public void formatChineseDateTimeTest() {
 		String formatChineseDateTime = DateUtil.formatChineseDate(DateUtil.parse("2018-02-24 12:13:14"), true, true);
 		Assert.assertEquals("二〇一八年二月二十四日十二时十三分十四秒", formatChineseDateTime);
+
+		formatChineseDateTime = DateUtil.formatChineseDate(DateUtil.parse("2022-01-18 12:00:00"), true, true);
+		Assert.assertEquals("二〇二二年一月十八日十二时零分零秒", formatChineseDateTime);
 	}
 
 	@Test
@@ -991,6 +995,8 @@ public class DateUtilTest {
 		final DateTime parse = DateUtil.parse("2021-1-1");
 		Assert.assertNotNull(parse);
 		Assert.assertEquals("2021-01-01 00:00:00", parse.toString());
+
+		Console.log(DateUtil.parse("2021-1-22 00:00:00"));
 	}
 
 	@Test

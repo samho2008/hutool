@@ -22,7 +22,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.text.Normalizer;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -1090,7 +1089,7 @@ public class CharSequenceUtil {
 	/**
 	 * 指定范围内查找指定字符
 	 *
-	 * @param text        字符串
+	 * @param text       字符串
 	 * @param searchChar 被查找的字符
 	 * @param start      起始位置，如果小于0，从0开始查找
 	 * @param end        终止位置，如果超过str.length()则默认查找到字符串末尾
@@ -1207,9 +1206,9 @@ public class CharSequenceUtil {
 	 * 指定范围内查找字符串<br>
 	 * fromIndex 为搜索起始位置，从后往前计数
 	 *
-	 * @param text        字符串
+	 * @param text       字符串
 	 * @param searchStr  需要查找位置的字符串
-	 * @param from  起始位置，从后往前计数
+	 * @param from       起始位置，从后往前计数
 	 * @param ignoreCase 是否忽略大小写
 	 * @return 位置
 	 * @since 3.2.1
@@ -1803,10 +1802,7 @@ public class CharSequenceUtil {
 	 * @since 5.7.14
 	 */
 	public static <R> List<R> split(CharSequence str, char separator, int limit, boolean ignoreEmpty, Function<String, R> mapping) {
-		if (null == str) {
-			return new ArrayList<>(0);
-		}
-		return StrSplitter.split(str.toString(), separator, limit, ignoreEmpty, mapping);
+		return StrSplitter.split(str, separator, limit, ignoreEmpty, mapping);
 	}
 
 	/**
@@ -1847,11 +1843,8 @@ public class CharSequenceUtil {
 	 * @since 3.2.0
 	 */
 	public static List<String> split(CharSequence str, CharSequence separator, int limit, boolean isTrim, boolean ignoreEmpty) {
-		if (null == str) {
-			return new ArrayList<>(0);
-		}
 		final String separatorStr = (null == separator) ? null : separator.toString();
-		return StrSplitter.split(str.toString(), separatorStr, limit, isTrim, ignoreEmpty);
+		return StrSplitter.split(str, separatorStr, limit, isTrim, ignoreEmpty);
 	}
 
 	/**
@@ -1860,13 +1853,10 @@ public class CharSequenceUtil {
 	 * @param str 字符串
 	 * @param len 每一个小节的长度
 	 * @return 截取后的字符串数组
-	 * @see StrSplitter#splitByLength(String, int)
+	 * @see StrSplitter#splitByLength(CharSequence, int)
 	 */
 	public static String[] split(CharSequence str, int len) {
-		if (null == str) {
-			return new String[]{};
-		}
-		return StrSplitter.splitByLength(str.toString(), len);
+		return StrSplitter.splitByLength(str, len);
 	}
 
 	/**
@@ -2015,9 +2005,9 @@ public class CharSequenceUtil {
 		}
 
 		if (counterOfDoubleByte % 2 != 0) {
-			if(halfUp){
+			if (halfUp) {
 				len += 1;
-			}else{
+			} else {
 				len -= 1;
 			}
 		}
@@ -2346,7 +2336,9 @@ public class CharSequenceUtil {
 			}
 		} else {
 			int suffixIndex;
-			for (String fragment : split) {
+			String fragment;
+			for (int i = 1; i < split.length; i++) {
+				fragment = split[i];
 				suffixIndex = fragment.indexOf(suffix.toString());
 				if (suffixIndex > 0) {
 					result.add(fragment.substring(0, suffixIndex));
@@ -2486,8 +2478,8 @@ public class CharSequenceUtil {
 	 * StrUtil.repeatAndJoin("?", 5, null) = "?????"
 	 * </pre>
 	 *
-	 * @param str         被重复的字符串
-	 * @param count       数量
+	 * @param str       被重复的字符串
+	 * @param count     数量
 	 * @param delimiter 分界符
 	 * @return 连接后的字符串
 	 * @since 4.0.1
@@ -3538,7 +3530,7 @@ public class CharSequenceUtil {
 
 		final int strLength = str.length();
 		final int searchStrLength = searchStr.length();
-		if(strLength < searchStrLength){
+		if (strLength < searchStrLength) {
 			// issue#I4M16G@Gitee
 			return str(str);
 		}
@@ -3570,7 +3562,8 @@ public class CharSequenceUtil {
 	}
 
 	/**
-	 * 替换指定字符串的指定区间内字符为固定字符
+	 * 替换指定字符串的指定区间内字符为固定字符<br>
+	 * 此方法使用{@link String#codePoints()}完成拆分替换
 	 *
 	 * @param str          字符串
 	 * @param startInclude 开始位置（包含）
@@ -3583,27 +3576,29 @@ public class CharSequenceUtil {
 		if (isEmpty(str)) {
 			return str(str);
 		}
-		final int strLength = str.length();
+		final String originalStr = str(str);
+		int[] strCodePoints = originalStr.codePoints().toArray();
+		final int strLength = strCodePoints.length;
 		if (startInclude > strLength) {
-			return str(str);
+			return originalStr;
 		}
 		if (endExclude > strLength) {
 			endExclude = strLength;
 		}
 		if (startInclude > endExclude) {
 			// 如果起始位置大于结束位置，不替换
-			return str(str);
+			return originalStr;
 		}
 
-		final char[] chars = new char[strLength];
+		final StringBuilder stringBuilder = new StringBuilder();
 		for (int i = 0; i < strLength; i++) {
 			if (i >= startInclude && i < endExclude) {
-				chars[i] = replacedChar;
+				stringBuilder.append(replacedChar);
 			} else {
-				chars[i] = str.charAt(i);
+				stringBuilder.append(new String(strCodePoints, i, 1));
 			}
 		}
-		return new String(chars);
+		return stringBuilder.toString();
 	}
 
 	/**
@@ -4198,11 +4193,17 @@ public class CharSequenceUtil {
 	 * 将给定字符串，变成 "xxx...xxx" 形式的字符串
 	 *
 	 * <ul>
-	 *     <li>abcdef 5 -》 a...f</li>
-	 *     <li>abcdef 4 -》 a..f</li>
-	 *     <li>abcdef 3 -》 a.f</li>
-	 *     <li>abcdef 2 -》 a.</li>
-	 *     <li>abcdef 1 -》 a</li>
+	 *     <li>abcdefgh  9 -》 abcdefgh</li>
+	 *     <li>abcdefgh  8 -》 abcdefgh</li>
+	 *     <li>abcdefgh  7 -》 ab...gh</li>
+	 *     <li>abcdefgh  6 -》 ab...h</li>
+	 *     <li>abcdefgh  5 -》 a...h</li>
+	 *     <li>abcdefgh  4 -》 a..h</li>
+	 *     <li>abcdefgh  3 -》 a.h</li>
+	 *     <li>abcdefgh  2 -》 a.</li>
+	 *     <li>abcdefgh  1 -》 a</li>
+	 *     <li>abcdefgh  0 -》 abcdefgh</li>
+	 *     <li>abcdefgh -1 -》 abcdefgh</li>
 	 * </ul>
 	 *
 	 * @param str       字符串
@@ -4225,14 +4226,17 @@ public class CharSequenceUtil {
 			case 2:
 				return str.charAt(0) + ".";
 			case 3:
-				return str.charAt(0) + "." + str.charAt(str.length() - 1);
+				return str.charAt(0) + "." + str.charAt(strLength - 1);
+			case 4:
+				return str.charAt(0) + ".." + str.charAt(strLength - 1);
 		}
 
-		final int w = maxLength / 2;
+		final int suffixLength = (maxLength - 3) / 2;
+		final int preLength = suffixLength + (maxLength - 3) % 2; // suffixLength 或 suffixLength + 1
 		final String str2 = str.toString();
 		return format("{}...{}",
-				str2.substring(0, maxLength - w),
-				str2.substring(strLength - w + 3));
+				str2.substring(0, preLength),
+				str2.substring(strLength - suffixLength));
 	}
 
 	/**

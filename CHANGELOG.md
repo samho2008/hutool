@@ -3,6 +3,60 @@
 
 -------------------------------------------------------------------------------------------------------------
 
+# 5.7.20 (2022-01-20)
+
+### 🐣新特性
+* 【core   】     增加对null值友好的groupingBy操作的Collector实现，可指定map类型（pr#498@Gitee）
+* 【core   】     增加KetamaHash（issue#2084@Github）
+* 【crypto 】     增加SignUtil
+* 【json   】     JSONGetter增加getBeanList方法
+* 【core   】     ObjectUtil 添加三个defaultIfXxxx方法，用于节省CPU及内存损耗(pr#2094@Github)
+* 【db     】     增加单条数据原生upsert语义支持(pr#501@Gitee)
+* 【core   】     在CollectorUtil提交Collectors.toMap的对null友好实现，避免NPE(pr#502@Gitee)
+* 【http   】     增加HttpGlobalConfig.setIgnoreEOFError(issue#2092@Github)
+* 【core   】     RandomUtil.randomStringWithoutStr排除字符串兼容大写字母(pr#503@Gitee)
+* 【core   】     LocalDateTime增加isOverlap方法(pr#512@Gitee)
+* 【core   】     Ipv4Util.getBeginIpLong、getEndIpLong改为public(pr#508@Gitee)
+* 
+### 🐞Bug修复
+* 【core   】     修复setter重载导致匹配错误（issue#2082@Github）
+* 【core   】     修复RegexPool汉字匹配范围小问题（pr#2081@Github）
+* 【core   】     修复OS中的拼写错误（pr#500@Gitee）
+* 【core   】     修复CustomKeyMap的merge失效问题（issue#2086@Github）
+* 【core   】     修复FileUtil.appendLines换行问题（issue#I4QCEZ@Gitee）
+* 【core   】     修复java.time.Month解析问题（issue#2090@Github）
+* 【core   】     修复PathUtil.moveContent移动覆盖导致的问题（issue#I4QV0L@Gitee）
+* 【core   】     修复Opt.ofTry中并发环境下线程安全问题（pr#504@Gitee）
+* 【core   】     修复PatternFinder中end边界判断问题（issue#2099@Github）
+* 【core   】     修复格式化为中文日期时，0被处理为空串（pr#507@Gitee）
+* 【core   】     修复UrlPath转义冒号问题（issue#I4RA42@Gitee）
+
+-------------------------------------------------------------------------------------------------------------
+# 5.7.19 (2022-01-07)
+
+### 🐣新特性
+* 【db     】     优化Condition参数拆分（pr#2046@Github）
+* 【core   】     优化ArrayUtil.isAllEmpty性能（pr#2045@Github）
+* 【core   】     CharSequenceUtil.replace方法支持增补字符（pr#2041@Github）
+* 【extra  】     增加SshjSftp（pr#493@Gitee）
+* 【core   】     增加CheckedUtil（pr#491@Gitee）
+* 【extra  】     增加Sftp.isDir中的抛异常判断条件（issues#I4P9ED@Gitee）
+
+### 🐞Bug修复
+* 【http   】     HttpUtil重定向次数失效问题（issue#I4O28Q@Gitee）
+* 【core   】     修复UrlPath空白path多/问题（issue#I49KAL@Gitee）
+* 【core   】     修复ServletUtil写出文件时未添加双引号导致逗号等特殊符号引起的问题（issue#I4P1BF@Gitee）
+* 【core   】     NumberUtil增加equals重载解决long传入判断问题（pr#2064@Github）
+* 【core   】     修复CsvParser行号有误问题（pr#2065@Github）
+* 【http   】     修复HttpRequest.of无法自动添加http前缀问题（issue#I4PEYL@Gitee）
+* 【core   】     修复 `CharSequenceUtil.brief(str, maxLength)` 方法字符串越界问题，以及 `maxLength` 部分值时结果与预期不符的问题（pr#2068@Github）
+* 【core   】     修复NamingCase中转换下划线字母+数字转换问题（issue#2070@Github）
+* 【core   】     修复split空判断不一致问题（pr#496@Gitee）
+* 【crypto 】     修复SM2.getDHex()前导0丢失,然后导致获取密钥错误（pr#2073@Github）
+* 【core   】     修复关于Calculator.conversion()方法EmptyStackException的bug（pr#2076@Github）
+* 【core   】     修复StrUtil.subBetweenAll循环bug（issue#I4PT3M@Gitee）
+
+-------------------------------------------------------------------------------------------------------------
 # 5.7.18 (2021-12-25)
 
 ### 🐣新特性
